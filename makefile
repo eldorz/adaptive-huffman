@@ -1,12 +1,15 @@
 CC=gcc
 CFLAGS=-D_XOPEN_SOURCE=700 -std=c11
 
-ahencode : ahencode.o
-	$(CC) $(CFLAGS) -o ahencode ahencode.o
+ahencode : ahencode.o common.o
+	$(CC) $(CFLAGS) -o ahencode ahencode.o common.o
 
-ahencode.o : ahencode.c
+ahencode.o : ahencode.c common.h
 	$(CC) $(CFLAGS) -c ahencode.c
 
+common.o : common.c common.h
+	$(CC) $(CFLAGS) -c common.c
+
 clean :
-	rm ahencode ahencode.o
+	rm ahencode *.o
 
