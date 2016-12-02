@@ -33,3 +33,4 @@ ahdecode
 # Debug files
 *.dSYM/
 *.su
+*.swp
