@@ -53,8 +53,6 @@ void encodeAndTransmit(int j, int *M, int *R, int *E, int n, block_t *blocks,
   }
 }
 
-void update(int j) { }
-
 void ahencode(char *message, int len, int sflag) {
   // stack variables
   int M = 0;
@@ -65,7 +63,7 @@ void ahencode(char *message, int len, int sflag) {
   // heap variables
   block_t *blocks = malloc((Z + 1) * sizeof(block_t));
   node_t *nodes = malloc((Z + 1) * sizeof(node_t));
-  int *rep = malloc(ALPHABET_SIZE * sizeof(int));  // node representing letter
+  int *rep = malloc((ALPHABET_SIZE + 1) * sizeof(int));  // node representing letter
 
   // initialise
   int availBlock = 0;
@@ -86,11 +84,11 @@ void ahencode(char *message, int len, int sflag) {
   // end debug
 
   // main loop
-  for (int i = 0; i < len; ++i) {
+  for (int i = 0; i < len - 1; ++i) {
     // bytecode alphabet is 0 to 255, so the jth 'letter' is bytecode + 1
     int j = message[i] + 1;
     encodeAndTransmit(j, &M, &R, &E, ALPHABET_SIZE, blocks, nodes, rep);
-    update(j);
+    update(j, &M, &E, &R, ALPHABET_SIZE, nodes, rep, blocks, &availBlock);
     if (sflag == 1) printf(" ");
   }
   printf("\n");

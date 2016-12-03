@@ -1,6 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <stdio.h>
+
 // define variable types
 typedef struct block {
   int weight;    // weight of nodes in block
@@ -31,5 +33,15 @@ typedef struct node {
  */
 void initialise(int *M, int *E, int *R, int n, node_t *nodes, int *rep, 
   block_t *blocks, int *availBlock);
+
+void update(int k, int *M, int *E, int *R, int n, node_t *nodes, int *rep,
+  block_t *blocks, int *availBlock);
+
+int findNode(int k, int *M, int *E, int *R, int n, node_t *nodes, int *rep,
+    block_t *blocks, int *availBlock, int *leafToIncrement);
+
+void interchangeLeaves(int e1, int e2);
+
+void slideAndIncrement();
 
 #endif
