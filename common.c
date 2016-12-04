@@ -55,7 +55,7 @@ int findNode(int k, int *M, int *E, int *R, int n, node_t *nodes, int *rep,
   int q = rep[k];
   *leafToIncrement = 0;
   if (q <= *M) {
-    interchangeLeaves(q, *M);
+    interchangeLeaves(q, *M, rep, nodes);
     if (*R == 0) {
       *R = *M / 2;
       if (*R > 0) {
@@ -95,7 +95,7 @@ int findNode(int k, int *M, int *E, int *R, int n, node_t *nodes, int *rep,
   }
   else {
     // interchange q with the first node in q's block
-    interchangeLeaves(q, blocks[nodes[q].block].first);
+    interchangeLeaves(q, blocks[nodes[q].block].first, rep, nodes);
     q = blocks[nodes[q].block].first;
     if ((q == *M + 1) && (*M > 0)) {
       *leafToIncrement = q;
@@ -105,8 +105,12 @@ int findNode(int k, int *M, int *E, int *R, int n, node_t *nodes, int *rep,
   return q;
 }
 
-void interchangeLeaves(int e1, int e2) {
-  printf("should be interchanging %d and %d\n", e1, e2);
+void interchangeLeaves(int e1, int e2, int *rep, node_t *nodes) {
+  rep[nodes[e1].alpha] = e2;
+  rep[nodes[e2].alpha] = e1;
+  int temp = nodes[e1].alpha;
+  nodes[e1].alpha = nodes[e2].alpha;
+  nodes[e2].alpha = temp;
 }
 
 void slideAndIncrement() {

@@ -40,7 +40,7 @@ void update(int k, int *M, int *E, int *R, int n, node_t *nodes, int *rep,
 int findNode(int k, int *M, int *E, int *R, int n, node_t *nodes, int *rep,
     block_t *blocks, int *availBlock, int *leafToIncrement);
 
-void interchangeLeaves(int e1, int e2);
+void interchangeLeaves(int e1, int e2, int *rep, node_t *nodes);
 
 void slideAndIncrement();
 
