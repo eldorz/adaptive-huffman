@@ -113,6 +113,30 @@ void interchangeLeaves(int e1, int e2, int *rep, node_t *nodes) {
   nodes[e2].alpha = temp;
 }
 
-void slideAndIncrement() {
-  printf("should be slide and incrementing\n");
+void slideAndIncrement(int *q, node_t *nodes, block_t *blocks) {
+  int bq = nodes[*q].block;
+  int nbq = blocks[bq].nextBlock;
+  int par = blocks[bq].parent;
+  int oldParent = par;
+  int oldParity = blocks[bq].parity;
+  bool slide = false; 
+  if (((*q <= n) && (blocks[nbq].first > n) && 
+    (blocks[nbq].weight == blocks[bq].weight)) || ((*q > n) && 
+    (blocks[nbq].first <= n) && 
+    (blocks[nbq].weight == blocks[bq].weight + 1))) {
+    // slide q over the next block
+    bool slide = true;
+    oldParent = blocks[nbq].parent;
+    oldParity = blocks[nbq].parity;
+    // adjust child pointers for next higher level in tree
+    if (par > 0) {
+      int bpar = nodes[par].block;
+      if (blocks[bpar].rtChild == *q) blocks[bpar].rtChild = blocks[nbq].last;
+      else if (blocks[bpar].rtChild == blocks[nbq].first)
+        blocks[bpar].rtChild = q;
+      else blocks[bpar].rtChild = blocks[bpar].rtChild + 1;
+ 
+    
+    
+  }
 }
