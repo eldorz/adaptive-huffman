@@ -2,6 +2,10 @@
 #define COMMON_H
 
 #include <stdio.h>
+#include <stdbool.h>
+
+#define ALPHA_SIZE 256
+#define Z ALPHA_SIZE * 2 - 1
 
 // define variable types
 typedef struct block {
@@ -31,17 +35,19 @@ typedef struct node {
  * blocks - array of block_type
  * availBlock - first block available if list is nonempty, 0 otherwise
  */
-void initialise(int *M, int *E, int *R, int n, node_t *nodes, int *rep, 
+void initialise(int *M, int *E, int *R, node_t *nodes, int *rep, 
   block_t *blocks, int *availBlock);
 
-void update(int k, int *M, int *E, int *R, int n, node_t *nodes, int *rep,
+void update(int k, int *M, int *E, int *R, node_t *nodes, int *rep,
   block_t *blocks, int *availBlock);
 
-int findNode(int k, int *M, int *E, int *R, int n, node_t *nodes, int *rep,
+int findNode(int k, int *M, int *E, int *R, node_t *nodes, int *rep,
     block_t *blocks, int *availBlock, int *leafToIncrement);
 
 void interchangeLeaves(int e1, int e2, int *rep, node_t *nodes);
 
-void slideAndIncrement();
+void slideAndIncrement(int *q, node_t *nodes, block_t *blocks, int *availBlock);
+
+int findChild(int j, int parity, node_t *nodes, block_t *blocks);
 
 #endif

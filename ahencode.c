@@ -5,9 +5,6 @@
 #include <stddef.h>
 #include "common.h"
 
-// constants
-#define ALPHABET_SIZE 256
-
 void char_to_binstring(char c, char *binstring) {
   int next = 0;
   for (int i = 7; i >= 0; --i) {
@@ -18,7 +15,7 @@ void char_to_binstring(char c, char *binstring) {
   binstring[8] = 0;             // null terminate
 }
 
-void encodeAndTransmit(int j, int *M, int *R, int *E, int n, block_t *blocks,
+void encodeAndTransmit(int j, int *M, int *R, int *E, block_t *blocks,
   node_t *nodes, int *rep) {
   int q = rep[j];  // get a node for letter j
   int i = 0;
@@ -39,8 +36,8 @@ void encodeAndTransmit(int j, int *M, int *R, int *E, int n, block_t *blocks,
     }
     q = *M;
   }
-  if (*M == n) root = n;
-  else root = 2 * n - 1;
+  if (*M == ALPHA_SIZE) root = ALPHA_SIZE;
+  else root = 2 * ALPHA_SIZE - 1;
   while (q != root) {  // traverse up the tree
     ++i;
     int qBlock = nodes[q].block;
@@ -58,45 +55,43 @@ void ahencode(char *message, int len, int sflag) {
   int M = 0;
   int R = 0;
   int E = 0;
-  int Z = 2 * ALPHABET_SIZE - 1;
 
   // heap variables
   block_t *blocks = malloc((Z + 1) * sizeof(block_t));
   node_t *nodes = malloc((Z + 1) * sizeof(node_t));
-  int *rep = malloc((ALPHABET_SIZE + 1) * sizeof(int));  // node representing letter
+  int *rep = malloc((ALPHA_SIZE + 1) * sizeof(int));  // node representing letter
 
   // initialise
   int availBlock = 0;
-  initialise(&M, &E, &R, ALPHABET_SIZE, nodes, rep, blocks, &availBlock);
+  initialise(&M, &E, &R, nodes, rep, blocks, &availBlock);
  
-  // debug
-  /*
-  printf("M = %d, E = %d, R = %d\n", M, E, R);
-  for (int i = 1; i <= Z; ++i) {
-    printf("node %d: block: %d alpha: %d\n", i, nodes[i].block, nodes[i].alpha);
-  }
-  for (int i = 1; i <= Z; ++i) {
-    printf("block %d: weight: %d parent: %d parity: %d rtChild: %d first: %d last: %d prevBlock: %d nextBlock: %d\n", i, blocks[i].weight, blocks[i].parent, 
-      blocks[i].parity, blocks[i].rtChild, blocks[i].first, blocks[i].last, 
-      blocks[i].prevBlock, blocks[i].nextBlock);
-  }
-  */
-  // end debug
 
   // main loop
   for (int i = 0; i < len - 1; ++i) {
     // bytecode alphabet is 0 to 255, so the jth 'letter' is bytecode + 1
     int j = message[i] + 1;
-    encodeAndTransmit(j, &M, &R, &E, ALPHABET_SIZE, blocks, nodes, rep);
-    update(j, &M, &E, &R, ALPHABET_SIZE, nodes, rep, blocks, &availBlock);
+    encodeAndTransmit(j, &M, &R, &E, blocks, nodes, rep);
+    update(j, &M, &E, &R, nodes, rep, blocks, &availBlock);
     if (sflag == 1) printf(" ");
+    
+  // debug
+  printf("M = %d, E = %d, R = %d\n", M, E, R);
+  for (int i = 253; i <= 258; ++i) {
+    printf("node %d: block: %d alpha: %d\n", i, nodes[i].block, nodes[i].alpha);
+  }
+  for (int i = 1; i <= 5; ++i) {
+    printf("block %d: weight: %d parent: %d parity: %d rtChild: %d first: %d last: %d prevBlock: %d nextBlock: %d\n", i, blocks[i].weight, blocks[i].parent, 
+      blocks[i].parity, blocks[i].rtChild, blocks[i].first, blocks[i].last, 
+      blocks[i].prevBlock, blocks[i].nextBlock);
+  }
+  // end debug
   }
   printf("\n");
   
   // free heap variables
-  free(blocks);
-  free(nodes);
-  free(rep);
+  //free(blocks);
+  //free(nodes);
+  //free(rep);
 }
 
 int main(int argc, char **argv) {
