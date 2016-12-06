@@ -78,9 +78,9 @@ void ahencode(char *message, int len, int sflag) {
   printf("\n");
   
   // free heap variables
-  //free(blocks);
-  //free(nodes);
-  //free(rep);
+  free(blocks);
+  free(nodes);
+  free(rep);
 }
 
 int main(int argc, char **argv) {

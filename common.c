@@ -113,116 +113,110 @@ void interchangeLeaves(int e1, int e2, int *rep, node_t *nodes) {
 void slideAndIncrement(int *q, node_t *nodes, block_t *blocks, 
   int *availBlock) {
   int bq_index = nodes[*q].block;
-  block_t bq = blocks[bq_index];
-  int nbq_index = bq.nextBlock;
-  block_t nbq = blocks[nbq_index];
-  int par = bq.parent;
+  block_t *bq = &(blocks[bq_index]);
+  int nbq_index = bq->nextBlock;
+  block_t *nbq = &(blocks[nbq_index]);
+  int par = bq->parent;
   int oldParent = par;
-  int oldParity = bq.parity;
+  int oldParity = bq->parity;
   bool slide = false; 
-  if (((*q <= ALPHA_SIZE) && (nbq.first > ALPHA_SIZE) && 
-    (nbq.weight == bq.weight)) || ((*q > ALPHA_SIZE) && 
-    (nbq.first <= ALPHA_SIZE) && 
-    (nbq.weight == bq.weight + 1))) {
+  if (((*q <= ALPHA_SIZE) && (nbq->first > ALPHA_SIZE) && 
+    (nbq->weight == bq->weight)) || ((*q > ALPHA_SIZE) && 
+    (nbq->first <= ALPHA_SIZE) && 
+    (nbq->weight == bq->weight + 1))) {
     // slide q over the next block
     bool slide = true;
-    oldParent = nbq.parent;
-    oldParity = nbq.parity;
+    oldParent = nbq->parent;
+    oldParity = nbq->parity;
     // adjust child pointers for next higher level in tree
     if (par > 0) {
       int bpar_index = nodes[par].block;
-      block_t bpar = blocks[bpar_index];
-      if (bpar.rtChild == *q) bpar.rtChild = nbq.last;
-      else if (bpar.rtChild == nbq.first) bpar.rtChild = *q;
-      else bpar.rtChild = bpar.rtChild + 1;
+      block_t *bpar = &(blocks[bpar_index]);
+      if (bpar->rtChild == *q) bpar->rtChild = nbq->last;
+      else if (bpar->rtChild == nbq->first) bpar->rtChild = *q;
+      else bpar->rtChild = bpar->rtChild + 1;
       if (par != Z) {
         int parPlusOneBlockIndex = nodes[par + 1].block;
-	block_t parPlusOneBlock = blocks[parPlusOneBlockIndex];
+	block_t *parPlusOneBlock = &(blocks[parPlusOneBlockIndex]);
         if (parPlusOneBlockIndex != bpar_index) {
-	  if (parPlusOneBlock.rtChild == nbq.first)
-	    parPlusOneBlock.rtChild = *q;
-	  else if (nodes[parPlusOneBlock.rtChild].block == nbq_index)
-	    parPlusOneBlock.rtChild = parPlusOneBlock.rtChild + 1;
+	  if (parPlusOneBlock->rtChild == nbq->first)
+	    parPlusOneBlock->rtChild = *q;
+	  else if (nodes[parPlusOneBlock->rtChild].block == nbq_index)
+	    parPlusOneBlock->rtChild = parPlusOneBlock->rtChild + 1;
 	}
       }
-      blocks[bpar_index] = bpar;
     }
     // adjust parent pointers for block nbq
-    nbq.parent = nbq.parent - 1 + nbq.parity;
-    nbq.parity = 1 - nbq.parity;
-    blocks[nbq_index] = nbq;
-    nbq_index = nbq.nextBlock;
-    nbq = blocks[nbq_index];
+    nbq->parent = nbq->parent - 1 + nbq->parity;
+    nbq->parity = 1 - nbq->parity;
+    nbq_index = nbq->nextBlock;
+    nbq = &(blocks[nbq_index]);
   }
   else slide = false;
 
-  if ((((*q <= ALPHA_SIZE) && (nbq.first <= ALPHA_SIZE)) ||
-        ((*q > ALPHA_SIZE) && (nbq.first > ALPHA_SIZE))) &&
-        (nbq.weight = bq.weight + 1)) {
+  if ((((*q <= ALPHA_SIZE) && (nbq->first <= ALPHA_SIZE)) ||
+        ((*q > ALPHA_SIZE) && (nbq->first > ALPHA_SIZE))) &&
+        (nbq->weight == bq->weight + 1)) {
     // merge q into the block of weight one higher
     nodes[*q].block = nbq_index;
-    nbq.last = *q;
-    if (bq.last == *q) {
+    nbq->last = *q;
+    if (bq->last == *q) {
       // q's old block disappears
-      blocks[bq.prevBlock].nextBlock = bq.nextBlock;
-      blocks[bq.nextBlock].prevBlock = bq.prevBlock;
-      bq.nextBlock = *availBlock;
+      blocks[bq->prevBlock].nextBlock = bq->nextBlock;
+      blocks[bq->nextBlock].prevBlock = bq->prevBlock;
+      bq->nextBlock = *availBlock;
       *availBlock = bq_index;
     }
     else {
-      if (*q > ALPHA_SIZE) bq.rtChild = findChild(*q - 1, 1, nodes, blocks);
-      if (bq.parity == 0) bq.parent = bq.parent - 1;
-      bq.parity = 1 - bq.parity;
-      bq.first = *q - 1;
+      if (*q > ALPHA_SIZE) bq->rtChild = findChild(*q - 1, 1, nodes, blocks);
+      if (bq->parity == 0) bq->parent = bq->parent - 1;
+      bq->parity = 1 - bq->parity;
+      bq->first = *q - 1;
     }
   }
-  else if (bq.last == *q) {
+  else if (bq->last == *q) {
     if (slide) {
       // q's block is slid forward in the block list
-      blocks[bq.nextBlock].prevBlock = bq.prevBlock;
-      blocks[bq.prevBlock].nextBlock = bq.nextBlock;
-      bq.prevBlock = nbq.prevBlock;
-      bq.nextBlock = nbq_index;
-      nbq.prevBlock = bq_index;
-      blocks[bq.prevBlock].nextBlock = bq_index;
-      bq.parent = oldParent;
-      bq.parity = oldParity;
+      blocks[bq->nextBlock].prevBlock = bq->prevBlock;
+      blocks[bq->prevBlock].nextBlock = bq->nextBlock;
+      bq->prevBlock = nbq->prevBlock;
+      bq->nextBlock = nbq_index;
+      nbq->prevBlock = bq_index;
+      blocks[bq->prevBlock].nextBlock = bq_index;
+      bq->parent = oldParent;
+      bq->parity = oldParity;
     }
-    bq.weight = bq.weight + 1;
+    bq->weight = bq->weight + 1;
   }
   else {
     // a new block is created for q
     int b_index = *availBlock;
-    block_t b = blocks[b_index];
+    block_t *b = &(blocks[b_index]);
     *availBlock = blocks[*availBlock].nextBlock;
     nodes[*q].block = b_index;
-    b.first = *q;
-    b.last = *q;
+    b->first = *q;
+    b->last = *q;
     if (*q > ALPHA_SIZE) {
-      b.rtChild = bq.rtChild;
-      bq.rtChild = findChild(*q - 1, 1, nodes, blocks);
-      if (b.rtChild == *q - 1) bq.parent = *q;
-      else if (bq.parity == 0) bq.parent = bq.parent - 1;
+      b->rtChild = bq->rtChild;
+      bq->rtChild = findChild(*q - 1, 1, nodes, blocks);
+      if (b->rtChild == *q - 1) bq->parent = *q;
+      else if (bq->parity == 0) bq->parent = bq->parent - 1;
     }
-    else if (bq.parity == 0) bq.parent = bq.parent - 1;
-    bq.first = *q - 1;
-    bq.parity = 1 - bq.parity;
+    else if (bq->parity == 0) bq->parent = bq->parent - 1;
+    bq->first = *q - 1;
+    bq->parity = 1 - bq->parity;
     // insert q's block in its proper place in the block list
-    b.prevBlock = nbq.prevBlock;
-    b.nextBlock = nbq_index;
-    nbq.prevBlock = b_index;
-    blocks[b.prevBlock].nextBlock = b_index;
-    b.weight = bq.weight + 1;
-    b.parent = oldParent;
-    b.parity = oldParity;
-    blocks[b_index] = b;
+    b->prevBlock = nbq->prevBlock;
+    b->nextBlock = nbq_index;
+    nbq->prevBlock = b_index;
+    blocks[b->prevBlock].nextBlock = b_index;
+    b->weight = bq->weight + 1;
+    b->parent = oldParent;
+    b->parity = oldParity;
   }
   // move q one level higher in tree
   if (*q <= ALPHA_SIZE) *q = oldParent;
   else *q = par;
-
-  blocks[bq_index] = bq;
-  blocks[nbq_index] = nbq;
 }
 
 int findChild(int j, int parity, node_t *nodes, block_t *blocks) {
