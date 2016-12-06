@@ -74,17 +74,6 @@ void ahencode(char *message, int len, int sflag) {
     update(j, &M, &E, &R, nodes, rep, blocks, &availBlock);
     if (sflag == 1) printf(" ");
     
-  // debug
-  printf("M = %d, E = %d, R = %d\n", M, E, R);
-  for (int i = 253; i <= 258; ++i) {
-    printf("node %d: block: %d alpha: %d\n", i, nodes[i].block, nodes[i].alpha);
-  }
-  for (int i = 1; i <= 5; ++i) {
-    printf("block %d: weight: %d parent: %d parity: %d rtChild: %d first: %d last: %d prevBlock: %d nextBlock: %d\n", i, blocks[i].weight, blocks[i].parent, 
-      blocks[i].parity, blocks[i].rtChild, blocks[i].first, blocks[i].last, 
-      blocks[i].prevBlock, blocks[i].nextBlock);
-  }
-  // end debug
   }
   printf("\n");
   

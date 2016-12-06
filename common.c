@@ -145,10 +145,12 @@ void slideAndIncrement(int *q, node_t *nodes, block_t *blocks,
 	    parPlusOneBlock.rtChild = parPlusOneBlock.rtChild + 1;
 	}
       }
+      blocks[bpar_index] = bpar;
     }
     // adjust parent pointers for block nbq
     nbq.parent = nbq.parent - 1 + nbq.parity;
     nbq.parity = 1 - nbq.parity;
+    blocks[nbq_index] = nbq;
     nbq_index = nbq.nextBlock;
     nbq = blocks[nbq_index];
   }
@@ -213,10 +215,14 @@ void slideAndIncrement(int *q, node_t *nodes, block_t *blocks,
     b.weight = bq.weight + 1;
     b.parent = oldParent;
     b.parity = oldParity;
+    blocks[b_index] = b;
   }
   // move q one level higher in tree
   if (*q <= ALPHA_SIZE) *q = oldParent;
   else *q = par;
+
+  blocks[bq_index] = bq;
+  blocks[nbq_index] = nbq;
 }
 
 int findChild(int j, int parity, node_t *nodes, block_t *blocks) {
