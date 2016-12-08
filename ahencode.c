@@ -50,7 +50,7 @@ void encodeAndTransmit(int j, int *M, int *R, int *E, block_t *blocks,
   }
 }
 
-void ahencode(char *message, int len, int sflag) {
+void ahencode(unsigned char *message, int len, int sflag) {
   // stack variables
   int M = 0;
   int R = 0;
@@ -96,9 +96,8 @@ int main(int argc, char **argv) {
   char *nextline = NULL;
   size_t size = 0;
   ssize_t byteCount;
-  char binstring[9] = "";
   while ((byteCount = getline(&nextline, &size, stdin)) != -1) {
-    ahencode(nextline, byteCount, sflag);
+    ahencode((unsigned char *)nextline, byteCount, sflag);
   }
 
   // free heap variables
