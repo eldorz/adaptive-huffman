@@ -20,7 +20,7 @@ void encodeAndTransmit(int j, int *M, int *R, int *E, block_t *blocks,
   int q = rep[j];  // get a node for letter j
   int i = 0;
   int t = 0;
-  int stack[9];
+  int stack[17];
   int root = 0;
   if (q <= *M) {   // encode letter of 0 weight
     q = q - 1;

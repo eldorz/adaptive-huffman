@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-D_XOPEN_SOURCE=700 -std=c11 -ggdb
+CFLAGS=-D_XOPEN_SOURCE=700 -std=c11 -gdwarf-3
 
 ahencode : ahencode.o common.o
 	$(CC) $(CFLAGS) -o ahencode ahencode.o common.o
