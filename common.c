@@ -125,7 +125,7 @@ void slideAndIncrement(int *q, node_t *nodes, block_t *blocks,
     (nbq->first <= ALPHA_SIZE) && 
     (nbq->weight == bq->weight + 1))) {
     // slide q over the next block
-    bool slide = true;
+    slide = true;
     oldParent = nbq->parent;
     oldParity = nbq->parity;
     // adjust child pointers for next higher level in tree
@@ -175,7 +175,7 @@ void slideAndIncrement(int *q, node_t *nodes, block_t *blocks,
     }
   }
   else if (bq->last == *q) {
-    if (slide) {
+    if (slide == true) {
       // q's block is slid forward in the block list
       blocks[bq->nextBlock].prevBlock = bq->prevBlock;
       blocks[bq->prevBlock].nextBlock = bq->nextBlock;

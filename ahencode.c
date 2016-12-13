@@ -5,16 +5,6 @@
 #include <stddef.h>
 #include "common.h"
 
-void char_to_binstring(char c, char *binstring) {
-  int next = 0;
-  for (int i = 7; i >= 0; --i) {
-    next = c & 00000001;
-    binstring[i] = 48 + next; // 48 is ASCII '0'
-    c = c >> 1;
-  }
-  binstring[8] = 0;             // null terminate
-}
-
 void encodeAndTransmit(int j, int *M, int *R, int *E, block_t *blocks,
   node_t *nodes, int *rep) {
   int q = rep[j];  // get a node for letter j
@@ -70,6 +60,23 @@ void ahencode(unsigned char *message, int len, int sflag) {
   for (int i = 0; i < len - 1; ++i) {
     // bytecode alphabet is 0 to 255, so the jth 'letter' is bytecode + 1
     int j = message[i] + 1;
+    
+    /* debug
+    printf("-----------------------------------------\n");
+    printf("State prior to update with character '%c', j of %d\n", message[i], j);
+    for (int k = 251; k <= 256; ++k) {
+      printf("nodes[%d] = {block = %d, alpha = %d}\n", k, nodes[k].block,
+        nodes[k].alpha);
+    }
+    for (int k = 507; k <= 511; ++k) {
+      printf("nodes[%d] = {block = %d, alpha = %d}\n", k, nodes[k].block,
+        nodes[k].alpha);
+    }
+    for (int k = 1; k <= 8; ++k) {
+      printf("blocks[%d] = {weight = %d, parent = %d, parity = %d, rtChild = %d, first = %d, last = %d, prevBlock = %d, nextBlock = %d}\n", k, blocks[k].weight, blocks[k].parent, blocks[k].parity, blocks[k].rtChild, blocks[k].first, blocks[k].last, blocks[k].prevBlock, blocks[k].nextBlock);
+    } */
+
+
     encodeAndTransmit(j, &M, &R, &E, blocks, nodes, rep);
     update(j, &M, &E, &R, nodes, rep, blocks, &availBlock);
     if (sflag == 1) printf(" ");
@@ -96,6 +103,7 @@ int main(int argc, char **argv) {
   char *nextline = NULL;
   size_t size = 0;
   ssize_t byteCount;
+  int i = 0;
   while ((byteCount = getline(&nextline, &size, stdin)) != -1) {
     ahencode((unsigned char *)nextline, byteCount, sflag);
   }
