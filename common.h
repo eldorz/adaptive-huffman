@@ -6,6 +6,7 @@
 
 #define ALPHA_SIZE 256
 #define Z ALPHA_SIZE * 2 - 1
+#define MAX_PLAINTEXT_SIZE 1000
 
 // define variable types
 typedef struct block {

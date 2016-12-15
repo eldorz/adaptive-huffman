@@ -27,6 +27,15 @@ int receiveAndDecode(char *message, size_t *pos, int *M, int *E, int *R,
   while (q > ALPHA_SIZE) { // traverse down the tree
     q = findChild(q, receive(message, pos), nodes, blocks);
   }
+  if (q == *M) { // decode 0 node
+    q = 0;
+    for (int i = 1; i <= *E; ++i) {
+      q = 2 * q + receive(message, pos);
+    }
+    if (q < *R) q = 2 * q + receive(message, pos);
+    else q = q + *R;
+    q = q + 1;
+  }
   return nodes[q].alpha;
 } 
 
@@ -47,14 +56,17 @@ void ahdecode(char *message, int len, int sflag) {
  
   // main loop
   size_t pos = 0;
+  unsigned char buf[MAX_PLAINTEXT_SIZE];
+  int i = 0;
   while (pos < len - 1) {
     // bytecode alphabet is 0 to 255, so the jth 'letter' is bytecode + 1
     int j = receiveAndDecode(message, &pos, &M, &E, &R, nodes, blocks);
     // add aj to message buffer
-    printf("%c", j);
+    buf[i++] = (unsigned char)j - 1;
     update(j, &M, &E, &R, nodes, rep, blocks, &availBlock);
   }
-  printf("\n");
+  buf[i] = 0;  // null terminate the string
+  printf("%s\n", buf);
   
   // free heap variables
   free(blocks);
