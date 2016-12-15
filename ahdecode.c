@@ -5,8 +5,29 @@
 #include <stddef.h>
 #include "common.h"
 
-int receiveAndDecode() {
-  return 0;
+int receive(char *message, size_t *pos) {
+  if (message[*pos] == 0) {
+    fprintf(stderr, "receive: unexpected end of string\n");
+    exit(1);
+  }
+  int retval = message[*pos] - (int)'0';
+  if (retval != 0 && retval != 1) {
+    fprintf(stderr, "receive: unexpected input: %c\n", message[*pos]);
+    exit(1);
+  }
+  ++(*pos);
+  return retval;
+}
+
+int receiveAndDecode(char *message, size_t *pos, int *M, int *E, int *R,
+  node_t *nodes, block_t *blocks) {
+  int q = 0;
+  if (*M == ALPHA_SIZE) q = ALPHA_SIZE;
+  else q = Z;
+  while (q > ALPHA_SIZE) { // traverse down the tree
+    q = findChild(q, receive(message, pos), nodes, blocks);
+  }
+  return nodes[q].alpha;
 } 
 
 void ahdecode(char *message, int len, int sflag) {
@@ -24,13 +45,13 @@ void ahdecode(char *message, int len, int sflag) {
   int availBlock = 0;
   initialise(&M, &E, &R, nodes, rep, blocks, &availBlock);
  
-
   // main loop
-  for (int i = 0; i < len - 1; ++i) {
+  size_t pos = 0;
+  while (pos < len - 1) {
     // bytecode alphabet is 0 to 255, so the jth 'letter' is bytecode + 1
-    int j = receiveAndDecode();
+    int j = receiveAndDecode(message, &pos, &M, &E, &R, nodes, blocks);
     // add aj to message buffer
-    printf("%d", j);
+    printf("%c", j);
     update(j, &M, &E, &R, nodes, rep, blocks, &availBlock);
   }
   printf("\n");
