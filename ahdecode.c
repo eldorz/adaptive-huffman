@@ -63,6 +63,7 @@ void ahdecode(char *message, int len, int sflag) {
     int j = receiveAndDecode(message, &pos, &M, &E, &R, nodes, blocks);
     // add aj to message buffer
     buf[i++] = (unsigned char)j - 1;
+    if (sflag == 1 && message[pos] == ' ') ++pos;
     update(j, &M, &E, &R, nodes, rep, blocks, &availBlock);
   }
   buf[i] = 0;  // null terminate the string
